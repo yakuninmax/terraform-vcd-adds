@@ -1,0 +1,7 @@
+powershell -ExecutionPolicy Bypass -Command "Set-ItemProperty -Path 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force -Confirm:$false"
+powershell -ExecutionPolicy Bypass -Command "Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319' -Name 'SchUseStrongCrypto' -Value '1' -Type DWord -Force -Confirm:$false"
+powershell -ExecutionPolicy Bypass -Command "Install-PackageProvider NuGet -Force"
+powershell -ExecutionPolicy Bypass -Command "Install-Module -Name ActiveDirectoryDsc -MaximumVersion 6.0.1 -Force"
+powershell -ExecutionPolicy Bypass -Command "Install-Module -Name NetworkingDsc -MaximumVersion 8.2.0 -Force"
+powershell -ExecutionPolicy Bypass -Command "New-SelfSignedCertificate -DnsName 'DscEncryptionCert' -NotAfter (Get-Date).AddYears(5) -CertStoreLocation "Cert:\LocalMachine\My" -KeyUsage KeyEncipherment,DataEncipherment, KeyAgreement -Type DocumentEncryptionCert | Export-Certificate -FilePath C:\Windows\Temp\DscEncryptionCert.cer"
+powershell -ExecutionPolicy Bypass -Command "Configuration LCM { Node localhost { LocalConfigurationManager { ConfigurationMode = 'ApplyOnly'; RebootNodeIfNeeded = $true; CertificateId = (Get-ChildItem Cert:\LocalMachine\My | ?{$_.Subject -eq 'CN=DscEncryptionCert'}).thumbprint }}}; LCM -OutputPath C:\Windows\Temp; Set-DscLocalConfigurationManager -Path C:\Windows\Temp -Force"
