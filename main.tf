@@ -60,16 +60,16 @@ resource "null_resource" "install-adds" {
  	}
 }
 
-# Wait for 3 minutes
-resource "time_sleep" "wait-180-seconds" {
+# Wait for 2 minutes
+resource "time_sleep" "wait-120-seconds" {
   depends_on = [ null_resource.install-adds ]
-  create_duration = "3m"
+  create_duration = "120s"
 }
 
 # Cleanup after installation
 resource "null_resource" "cleanup" {
  	count      = length(var.new_dc_name)
- 	depends_on = [ time_sleep.wait-180-seconds ]
+ 	depends_on = [ time_sleep.wait-120-seconds ]
 
  	provisioner "remote-exec" {
 
