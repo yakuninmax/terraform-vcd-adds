@@ -8,8 +8,8 @@ resource "null_resource" "configure-dsc" {
     type        = "ssh"
     user        = "Administrator"
     password    = var.local_admin_password
-    host        = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-    port        = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+    host        = var.external_ip != "" ? var.external_ip : var.dc_internal_ip[count.index]
+    port        = var.dc_external_ssh_port[count.index] != "" ? var.dc_external_ssh_port[count.index] : 22
     script_path = "/Windows/Temp/terraform_%RAND%.bat"
     timeout     = "15m"
   }
@@ -29,8 +29,8 @@ resource "null_resource" "copy-script" {
       type     = "ssh"
       user     = "Administrator"
       password = var.local_admin_password
-      host     = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-      port     = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+      host     = var.external_ip != "" ? var.external_ip : var.dc_internal_ip[count.index]
+      port     = var.dc_external_ssh_port[count.index] != "" ? var.dc_external_ssh_port[count.index] : 22
       timeout  = "15m"
     }
 
@@ -50,8 +50,8 @@ resource "null_resource" "install-adds" {
       type        = "ssh"
       user        = "Administrator"
       password    = var.local_admin_password
-      host        = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-      port        = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+      host        = var.external_ip != "" ? var.external_ip : var.dc_internal_ip[count.index]
+      port        = var.dc_external_ssh_port[count.index] != "" ? var.dc_external_ssh_port[count.index] : 22
       script_path = "C:/Windows/Temp/terraform_%RAND%.bat"
       timeout     = "15m"
     }
@@ -77,8 +77,8 @@ resource "null_resource" "cleanup" {
       type        = "ssh"
       user        = var.deploy_mode != "NewDC" ? "Administrator" : var.existing_domain_user
       password    = var.deploy_mode != "NewDC" ? var.domain_admin_password : var.existing_domain_password
-      host        = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-      port        = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+      host        = var.external_ip != "" ? var.external_ip : var.dc_internal_ip[count.index]
+      port        = var.dc_external_ssh_port[count.index] != "" ? var.dc_external_ssh_port[count.index] : 22
       script_path = "C:/Windows/Temp/terraform_%RAND%.bat"
       timeout     = "15m"
     }
@@ -98,8 +98,8 @@ resource "null_resource" "first-dc-dns" {
       type        = "ssh"
       user        = "Administrator"
       password    = var.domain_admin_password
-      host        = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-      port        = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+      host        = var.external_ip != "" ? var.external_ip : var.dc_internal_ip[0]
+      port        = var.dc_external_ssh_port[0] != "" ? var.dc_external_ssh_port[0] : 22
       script_path = "C:/Windows/Temp/terraform_%RAND%.bat"
       timeout     = "15m"
     }
@@ -119,8 +119,8 @@ resource "null_resource" "secondary-dc-dns" {
       type        = "ssh"
       user        = "Administrator"
       password    = var.domain_admin_password
-      host        = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-      port        = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+      host        = var.external_ip != "" ? var.external_ip : var.dc_internal_ip[count.index + 1]
+      port        = var.dc_external_ssh_port[count.index + 1] != "" ? var.dc_external_ssh_port[count.index + 1] : 22
       script_path = "C:/Windows/Temp/terraform_%RAND%.bat"
       timeout     = "15m"
     }
@@ -140,8 +140,8 @@ resource "null_resource" "new-dc-dns" {
       type        = "ssh"
       user        = var.existing_domain_user
       password    = var.existing_domain_password
-      host        = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-      port        = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+      host        = var.external_ip != "" ? var.external_ip : var.dc_internal_ip[count.index]
+      port        = var.dc_external_ssh_port[count.index] != "" ? var.dc_external_ssh_port[count.index] : 22
       script_path ="C:/Windows/Temp/terraform_%RAND%.bat"
       timeout     = "15m"
     }

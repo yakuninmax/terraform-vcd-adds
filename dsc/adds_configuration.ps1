@@ -1,7 +1,7 @@
 param (
     [string]$deploy_mode,
     [string]$new_dc_name,
-    [string]$internal_dc_ip,
+    [string]$dc_internal_ip,
     [string]$new_domain_name,
     [string]$dsrm_password, 
     [string]$domain_admin_password,
@@ -182,7 +182,7 @@ if ($existing_domain_user) {
 $ExistingDomainDns = $existing_domain_dns.split(",")
 
 # Get first DC IP address 
-$FirstDcIp = ($internal_dc_ip.split(","))[0]
+$FirstDcIp = ($dc_internal_ip.split(","))[0]
 
 # Get configuration data
 $ConfigData = @{   

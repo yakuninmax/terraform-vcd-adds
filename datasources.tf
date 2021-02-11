@@ -10,7 +10,7 @@ data "template_file" "install-adds" {
   vars = {
     deploy_mode              = "'${var.deploy_mode}'"
     new_dc_name              = "'${join(",", var.new_dc_name)}'"
-    internal_dc_ip           = "'${join(",", var.internal_dc_ip)}'"
+    dc_internal_ip           = "'${join(",", var.dc_internal_ip)}'"
     new_domain_name          = "'${var.new_domain_name}'"
     dsrm_password            = "'${var.dsrm_password}'"
     domain_admin_password    = "'${var.domain_admin_password}'"
@@ -27,7 +27,7 @@ data "template_file" "first-dc-dns" {
   template = file("${path.module}/cmd/configure_dns.cmd")
 
   vars = {
-    dns_servers = "127.0.0.1,${var.internal_dc_ip[1]}"
+    dns_servers = "127.0.0.1,${var.dc_internal_ip[1]}"
   }
 }
 
@@ -37,7 +37,7 @@ data "template_file" "secondary-dc-dns" {
   template = file("${path.module}/cmd/configure_dns.cmd")
 
   vars = {
-    dns_servers = "127.0.0.1,${var.internal_dc_ip[0]}"
+    dns_servers = "127.0.0.1,${var.dc_internal_ip[0]}"
   }
 }
 

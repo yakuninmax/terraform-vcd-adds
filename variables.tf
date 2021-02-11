@@ -38,7 +38,7 @@ variable "existing_domain_user" {
   description = "Domain user name (user@SOME.DOMAIN). Used for adding new domain or domain controllers. Leave blank for new forest"
 }
 
-variable "external_dc_ssh_port" {
+variable "dc_external_ssh_port" {
   type        = list(string)
   description = "DC external SSH port numbers"
   default = []
@@ -55,7 +55,7 @@ variable "local_admin_password" {
   description = "DC local administrator password"
 }
 
-variable "internal_dc_ip" {
+variable "dc_internal_ip" {
   type        = list(string)
   description = "DC IP addresses"
 }
