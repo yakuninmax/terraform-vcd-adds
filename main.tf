@@ -136,7 +136,7 @@ resource "null_resource" "new-dc-dns" {
 
   provisioner "remote-exec" {
 
-    onnection {
+    connection {
       type        = "ssh"
       user        = var.existing_domain_user
       password    = var.existing_domain_password
