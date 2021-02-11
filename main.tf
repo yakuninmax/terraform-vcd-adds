@@ -1,42 +1,42 @@
 # Install Powershell DSC modules
 resource "null_resource" "configure-dsc" {
-	count = length(var.new_dc_name)
+  count = length(var.new_dc_name)
     
- 	provisioner "remote-exec" {
+  provisioner "remote-exec" {
 
-   	connection {
-   		type     	  = "ssh"
-   		user     	  = "Administrator"
-   		password 	  = var.local_admin_password
-   		host     	  = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-      port        = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
-   		script_path = "/Windows/Temp/terraform_%RAND%.bat"
-   		timeout  	  = "15m"
-   	}
+  connection {
+    type     	  = "ssh"
+   	user     	  = "Administrator"
+    password 	  = var.local_admin_password
+  	host     	  = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
+    port          = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+   	script_path   = "/Windows/Temp/terraform_%RAND%.bat"
+   	timeout  	  = "15m"
+  }
 
-   	inline = [data.template_file.configure-dsc.rendered]
-	}
+  inline = [data.template_file.configure-dsc.rendered]
+  }
 }
 
 # Copy configuration script
 resource "null_resource" "copy-script" {
-	count      = length(var.new_dc_name)
-	depends_on = [ null_resource.configure-dsc ]
+  count      = length(var.new_dc_name)
+  depends_on = [ null_resource.configure-dsc ]
 
-	provisioner "file" {
+  provisioner "file" {
 
-		connection {
-   		type     = "ssh"
-   		user     = "Administrator"
-   		password = var.local_admin_password
-   		host     = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
-      port     = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
-      timeout  = "15m"
-   	}
+  connection {
+    type     = "ssh"
+    user     = "Administrator"
+    password = var.local_admin_password
+  	host     = var.external_ip != "" ? var.external_ip : var.internal_dc_ip[count.index]
+    port     = var.external_dc_ssh_port[count.index] != "" ? var.external_dc_ssh_port[count.index] : 22
+    timeout  = "15m"
+  }
 
-		source = "${path.module}/dsc/adds_configuration.ps1"
-    destination = "C:/Windows/Temp/adds_configuration.ps1"
-	}
+  source = "${path.module}/dsc/adds_configuration.ps1"
+  destination = "C:/Windows/Temp/adds_configuration.ps1"
+  }
 }
 
 # Install ADDS
